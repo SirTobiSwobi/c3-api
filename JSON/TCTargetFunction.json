@@ -1,0 +1,19 @@
+{
+	"assignments":[
+		{
+		"id": 0,
+		"documentId": 0,
+		"categoryId": 2
+		},
+		{
+		"id": 1,
+		"documentId": 0,
+		"categoryId": 1
+		},
+		{
+		"id": -1,
+		"documentId": 2,
+		"categoryId": 0
+		}
+	]
+}

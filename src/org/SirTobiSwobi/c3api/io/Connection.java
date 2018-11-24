@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Connection {
@@ -47,6 +48,11 @@ public class Connection {
 		return output;
 	}
 	
+	public void uploadJson(String json, String path) throws UnsupportedEncodingException, IOException{
+		URL url = new URL(endpoint+path);
+		postJSON(json,url);	
+	}
+	
 	public void putJSON(String json, URL url) throws UnsupportedEncodingException, IOException{
 		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		connection.setRequestMethod("PUT");
@@ -70,6 +76,8 @@ public class Connection {
 		int resp = connection.getResponseCode();
 		if(resp!=200){
 			throw new IOException("Unable to delete on server");
+		}else{
+			System.out.println("Deleted "+path);
 		}
 	}
 	
@@ -248,9 +256,13 @@ public class Connection {
 	}
 	
 	public void uploadAssignment(int docId, int catId) throws UnsupportedEncodingException, IOException{
+		uploadAssignment(-1,docId,catId);
+	}
+	
+	public void uploadAssignment(int id, int docId, int catId) throws UnsupportedEncodingException, IOException{
 		String json="{ \"assignments\":[";
 		json+="\t{";
-		json+="\t\t\"id\":-1,";
+		json+="\t\t\"id\":"+id+",";
 		json+="\t\t\"documentId\":"+docId+",";
 		json+="\t\t\"categoryId\":"+catId+"";
 		json+="\t}";			
@@ -284,10 +296,29 @@ public class Connection {
 		postJSON(json, url);
 	}
 	
-	public void triggerTraining() throws IOException{
-		URL url = new URL(endpoint+"/models?confId=1");
+	public void triggerTraining(int confId) throws IOException{
+		URL url = new URL(endpoint+"/models?confId="+confId);
 		postJSON("",url);
 	}
 	
+	public void categorizeExisting(int docId) throws IOException{
+		URL url = new URL(endpoint+"/categorizations/existing/"+docId);
+		postJSON("",url);
+	}
+	
+	public void categorizeNewDocument(int id, String label, String content, String docUrl) throws UnsupportedEncodingException, IOException{
+		content=content.replace("\"", "\\\"");
+		label = label.replace("\"", "\\\"");
+		String json="{";
+		json+="\t\"id\":"+id+",";
+		json+="\t\"label\":\""+label+"\",";
+		json+="\t\"content\":\""+content+"\",";
+		json+="\t\"url\":\""+docUrl+"\"";
+		json+="}";
+		System.out.println(json);
+		URL url = new URL(endpoint+"/categorizations");
+		postJSON(json,url);	
+		System.out.println("categorizing new document "+id);
+	}
 	
 }
