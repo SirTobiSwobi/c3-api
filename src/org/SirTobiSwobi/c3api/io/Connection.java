@@ -176,6 +176,22 @@ public class Connection {
 		System.out.println("uploading document "+id);
 	}
 	
+	public void uploadDocument(int id, String label, String content, String docUrl) throws UnsupportedEncodingException, IOException{
+		content=content.replace("\"", "\\\"");
+		String json="{ \"documents\":[";
+		json+="\t{";
+		json+="\t\t\"id\":"+id+",";
+		json+="\t\t\"label\":\""+label+"\",";
+		json+="\t\t\"content\":\""+content+"\",";
+		json+="\t\t\"url\":\""+docUrl+"\"";
+		json+="\t}";			
+		json+="]}";
+		System.out.println(json);
+		URL url = new URL(endpoint+"/documents");
+		postJSON(json,url);	
+		System.out.println("uploading document "+id);
+	}
+	
 	public void loadDocumentFromUrl(String url) throws UnsupportedEncodingException, IOException{
 		String json="{ \"documents\":[";
 		json+="\t{";
@@ -192,10 +208,18 @@ public class Connection {
 	}
 	
 	public void uploadSubRelationship(int fromId, int toId) throws UnsupportedEncodingException, IOException{
+		uploadSubRelationship(-1,fromId,toId);
+	}
+	
+	public void uploadEqualityRelationship(int fromId, int toId) throws UnsupportedEncodingException, IOException{
+		uploadEqualityRelationship(-1, fromId, toId);
+	}
+	
+	public void uploadSubRelationship(int id, int fromId, int toId) throws UnsupportedEncodingException, IOException{
 		String json="";
 		json+="{ \"relationships\":[";
 		json+="\t{";
-		json+="\t\t\"id\":-1,";
+		json+="\t\t\"id\":"+id+",";
 		json+="\t\t\"fromId\":"+fromId+",";
 		json+="\t\t\"toId\":"+toId+",";
 		json+="\t\t\"type\":\"Sub\"";
@@ -207,11 +231,11 @@ public class Connection {
 		System.out.println("transefering relationship "+fromId+"/"+toId+" to the server "+url.toString());
 	}
 	
-	public void uploadEqualityRelationship(int fromId, int toId) throws UnsupportedEncodingException, IOException{
+	public void uploadEqualityRelationship(int id, int fromId, int toId) throws UnsupportedEncodingException, IOException{
 		String json="";
 		json+="{ \"relationships\":[";
 		json+="\t{";
-		json+="\t\t\"id\":-1,";
+		json+="\t\t\"id\":"+id+",";
 		json+="\t\t\"fromId\":"+fromId+",";
 		json+="\t\t\"toId\":"+toId+",";
 		json+="\t\t\"type\":\"Equality\"";
